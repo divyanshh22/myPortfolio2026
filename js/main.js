@@ -20,8 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const syncIcon = () => {
             const light = document.documentElement.getAttribute("data-theme") === "light";
             btn.innerHTML = light ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-            document.querySelector('meta[name="theme-color"]').setAttribute("content", light ? "#f6f8fb" : "#0a0c10");
-            try { if (vantaEffect && vantaEffect.setOptions) vantaEffect.setOptions({ backgroundColor: light ? 0xf6f8fb : 0x0a0c10, color: light ? 0x5b6b86 : 0x22d3ee }); } catch (e) {}
+            const meta = $('meta[name="theme-color"]');
+            if (meta) meta.setAttribute("content", light ? "#f6f8fb" : "#0a0c10");
+            try { if (vantaEffect && vantaEffect.setOptions) vantaEffect.setOptions({ backgroundColor: light ? 0xfdfbf7 : 0x0b0f1a, color: light ? 0x8e9ab3 : 0xd4b77a }); } catch (e) {}
         };
         syncIcon();
         btn.addEventListener("click", () => {
@@ -39,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (bar) bar.style.width = "100%";
             setTimeout(() => el.classList.add("hidden"), 520);
         };
-        const min = 900;
+        const min = 950;
         const start = Date.now();
         const done = () => {
             const remain = Math.max(0, min - (Date.now() - start));
@@ -47,14 +48,20 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         if (document.readyState === "complete") done();
         else window.addEventListener("load", done, { once: true });
-        setTimeout(() => { if (!el.classList.contains("hidden")) hide(); }, 4000);
+        setTimeout(() => { if (!el.classList.contains("hidden")) hide(); }, 4200);
     };
     const renderSkills = () => {
         const grid = $("#skills-grid");
         if (!grid) return;
         grid.innerHTML = SITE_DATA.skills.map(g => `
-            <article class="skill-card" data-group="${g.group.toLowerCase()}" data-aos="zoom-in" data-tilt data-tilt-max="6" data-tilt-speed="700" data-tilt-glare data-tilt-max-glare="0.08">
-                <h3>${g.group}</h3>
+            <article class="skill-card" data-group="${g.group.toLowerCase()}" data-tilt data-tilt-max="6" data-tilt-speed="700" data-tilt-glare data-tilt-max-glare="0.08">
+                <div class="skill-head">
+                    <span class="skill-icon"><i class="${g.groupIcon}"></i></span>
+                    <div>
+                        <h3>${g.group}</h3>
+                        <span class="skill-count">${g.items.length} · ${g.group.includes("Core") || g.group.includes("Soft") ? "expertise" : "technologies"}</span>
+                    </div>
+                </div>
                 <div class="chips">
                     ${g.items.map(item => {
                         if (item.icon && item.icon.startsWith("http")) return `<span class="chip" data-name="${item.name.toLowerCase()}"><img src="${item.icon}" alt="${item.name}" loading="lazy">${item.name}</span>`;
@@ -73,8 +80,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const renderProjects = () => {
         const list = $("#projects-list");
         if (!list) return;
-        list.innerHTML = SITE_DATA.projects.map((p, i) => `
-            <article class="project-card" data-tags="${getProjectTags(p)}" data-aos="fade-up" data-aos-delay="${i * 80}" data-tilt data-tilt-max="7" data-tilt-speed="700" data-tilt-glare data-tilt-max-glare="0.1">
+        list.innerHTML = SITE_DATA.projects.map(p => `
+            <article class="project-card" data-tags="${getProjectTags(p)}" data-tilt data-tilt-max="7" data-tilt-speed="700" data-tilt-glare data-tilt-max-glare="0.1">
                 <div class="project-num">${p.num}</div>
                 <div>
                     <div class="project-top">
@@ -132,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const show = f === "*" || tags.includes(f);
                 card.classList.toggle("hidden", !show);
             });
+            if (typeof AOS !== "undefined") try { AOS.refreshHard(); } catch (e) {}
         });
     };
     const initSkillSearch = () => {
@@ -163,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
             els.forEach(el => {
                 const target = parseInt(el.dataset.count, 10);
                 let cur = 0;
-                const step = Math.max(1, Math.ceil(target / 50));
+                const step = Math.max(1, Math.ceil(target / 52));
                 const tick = () => {
                     cur = Math.min(target, cur + step);
                     el.textContent = cur;
@@ -225,8 +233,34 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const initAOS = () => {
         if (typeof AOS !== "undefined" && !reduced) {
-            try { AOS.init({ duration: 700, once: true, offset: 80, easing: "ease-out-cubic" }); } catch (e) {}
-        }
+            try { AOS.init({ duration: 700, once: true, offset: 80, easing: "ease-out-cubic" }); } catch (e) { document.documentElement.classList.add("no-aos"); }
+        } else { document.documentElement.classList.add("no-aos"); }
+    };
+    const initLenis = () => {
+        if (reduced || typeof Lenis === "undefined") return null;
+        try {
+            const lenis = new Lenis({ duration: 1.15, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+            const raf = time => { lenis.raf(time); requestAnimationFrame(raf); };
+            requestAnimationFrame(raf);
+            if (typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined") {
+                lenis.on("scroll", ScrollTrigger.update);
+                gsap.ticker.add(time => lenis.raf(time * 1000));
+                gsap.ticker.lagSmoothing(0);
+            }
+            return lenis;
+        } catch (e) { return null; }
+    };
+    const initGSAP = () => {
+        if (reduced || typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
+        try {
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.to(".orb-1", { yPercent: -18, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 } });
+            gsap.to(".orb-2", { yPercent: -28, xPercent: 6, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 } });
+            gsap.to(".orb-3", { yPercent: -14, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 } });
+            gsap.utils.toArray(".section-head").forEach(h => {
+                gsap.from(h, { y: 22, opacity: 0, duration: .7, ease: "power3.out", scrollTrigger: { trigger: h, start: "top 88%", once: true } });
+            });
+        } catch (e) {}
     };
     const initVanta = () => {
         const el = $("#hero-bg");
@@ -234,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (typeof VANTA === "undefined" || typeof THREE === "undefined") return;
         try {
             const light = document.documentElement.getAttribute("data-theme") === "light";
-            vantaEffect = VANTA.NET({ el: el, THREE: THREE, mouseControls: true, touchControls: false, gyroControls: false, minHeight: 200, minWidth: 200, scale: 1, scaleMobile: 1, color: light ? 0x5b6b86 : 0x22d3ee, backgroundColor: light ? 0xf6f8fb : 0x0a0c10, points: 9, maxDistance: 22, spacing: 18, showDots: true });
+            vantaEffect = VANTA.NET({ el: el, THREE: THREE, mouseControls: true, touchControls: false, gyroControls: false, minHeight: 200, minWidth: 200, scale: 1, scaleMobile: 1, color: light ? 0x8e9ab3 : 0xd4b77a, backgroundColor: light ? 0xfdfbf7 : 0x0b0f1a, points: 9, maxDistance: 22, spacing: 18, showDots: true });
         } catch (e) {}
     };
     const initNav = () => {
@@ -302,7 +336,9 @@ document.addEventListener("DOMContentLoaded", () => {
     initCursor();
     initMagnetic();
     initTilt();
+    initLenis();
     initAOS();
+    initGSAP();
     initVanta();
     initNav();
     initCopy();

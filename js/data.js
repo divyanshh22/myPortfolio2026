@@ -8,6 +8,7 @@ const SITE_DATA = {
     skills: [
         {
             group: "Programming Languages",
+            groupIcon: "fas fa-code",
             items: [
                 { name: "Python", icon: "https://cdn.simpleicons.org/python/3776AB" },
                 { name: "JavaScript", icon: "https://cdn.simpleicons.org/javascript/F7DF1E" },
@@ -16,16 +17,18 @@ const SITE_DATA = {
         },
         {
             group: "Frameworks & Libraries",
+            groupIcon: "fas fa-layer-group",
             items: [
                 { name: "Django", icon: "https://cdn.simpleicons.org/django/44B78B" },
                 { name: "Django REST Framework", icon: "https://cdn.simpleicons.org/django/44B78B" },
-                { name: "Flask", icon: "https://cdn.simpleicons.org/flask/ffffff" },
+                { name: "Flask", icon: "https://cdn.simpleicons.org/flask/000000" },
                 { name: "Tkinter", icon: "fas fa-window-maximize" },
                 { name: "Django Channels", icon: "fas fa-comments" }
             ]
         },
         {
             group: "Frontend",
+            groupIcon: "fas fa-palette",
             items: [
                 { name: "HTML", icon: "https://cdn.simpleicons.org/html5/E34F26" },
                 { name: "CSS", icon: "fab fa-css3-alt" },
@@ -34,6 +37,7 @@ const SITE_DATA = {
         },
         {
             group: "Databases",
+            groupIcon: "fas fa-database",
             items: [
                 { name: "PostgreSQL", icon: "https://cdn.simpleicons.org/postgresql/4169E1" },
                 { name: "MySQL", icon: "https://cdn.simpleicons.org/mysql/4479A1" },
@@ -42,9 +46,10 @@ const SITE_DATA = {
         },
         {
             group: "Tools & Platforms",
+            groupIcon: "fas fa-tools",
             items: [
                 { name: "Git", icon: "https://cdn.simpleicons.org/git/F05032" },
-                { name: "GitHub", icon: "https://cdn.simpleicons.org/github/e6e9ef" },
+                { name: "GitHub", icon: "https://cdn.simpleicons.org/github/181717" },
                 { name: "Docker", icon: "https://cdn.simpleicons.org/docker/2496ED" },
                 { name: "Nginx", icon: "https://cdn.simpleicons.org/nginx/009639" },
                 { name: "Gunicorn", icon: "https://cdn.simpleicons.org/gunicorn/EF0100" },
@@ -54,6 +59,7 @@ const SITE_DATA = {
         },
         {
             group: "Backend Infrastructure",
+            groupIcon: "fas fa-server",
             items: [
                 { name: "Redis", icon: "https://cdn.simpleicons.org/redis/FF4438" },
                 { name: "Celery (Async Task Queues)", icon: "https://cdn.simpleicons.org/celery/37814A" },
@@ -62,6 +68,7 @@ const SITE_DATA = {
         },
         {
             group: "Core Competencies",
+            groupIcon: "fas fa-bullseye",
             items: [
                 { name: "Backend Development" },
                 { name: "Full-Stack Development" },
@@ -73,6 +80,7 @@ const SITE_DATA = {
         },
         {
             group: "Soft Skills",
+            groupIcon: "fas fa-users",
             items: [
                 { name: "Problem-solving" },
                 { name: "Team Collaboration" },
