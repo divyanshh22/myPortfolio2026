@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+!document.addEventListener("DOMContentLoaded", () => {
     const $ = (s, c = document) => c.querySelector(s);
     const $$ = (s, c = document) => [...c.querySelectorAll(s)];
     const isFine = matchMedia("(pointer: fine)").matches;
